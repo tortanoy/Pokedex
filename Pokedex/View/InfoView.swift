@@ -28,10 +28,12 @@ class InfoView: UIView {
                 originalPokemonLabel.text = "Original Pokemon: No"
             }
             
-            if baseExperience < 100 {
-                baseExperienceLabel.text = "Pokemon is weak.."
+            if baseExperience <= 100 {
+                baseExperienceLabel.text = "Strength: Low"
+            } else if baseExperience <= 150 {
+                baseExperienceLabel.text = "Strength: Medium"
             } else {
-                baseExperienceLabel.text = "Pokemon is strong!"
+                baseExperienceLabel.text = "Strength: High"
             }
         }
     }
