@@ -39,8 +39,7 @@ class Pokemon {
     var defense: String?
     var description: String?
     var type: String?
-    var statDictionary: [String: String]?
-    var showFullInfo = false
+    var baseExperience: Int?
     
     init(id: Int, name: String, image: UIImage) {
         self.id = id
@@ -58,6 +57,11 @@ class Pokemon {
         
         if let height = dictionary["height"] as? Int {
             self.height = height
+        }
+        
+        if let baseExperience = dictionary["base_experience"] as? Int {
+            print(baseExperience)
+            self.baseExperience = baseExperience
         }
         
         if let types = dictionary["types"] as? [Dictionary<String, AnyObject>], types.count > 0 {

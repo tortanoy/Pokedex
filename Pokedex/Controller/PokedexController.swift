@@ -96,7 +96,6 @@ class PokedexController: UICollectionViewController {
     }
     
     func configureViewComponents() {
-        
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleDismissal))
         visualEffectView.addGestureRecognizer(gestureRecognizer)
         
@@ -206,7 +205,7 @@ extension PokedexController: PokedexCellDelegate {
             self.infoView.translatesAutoresizingMaskIntoConstraints = false
             self.infoView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
             self.infoView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -44).isActive = true
-            self.infoView.heightAnchor.constraint(equalToConstant: 440).isActive = true
+            self.infoView.heightAnchor.constraint(equalToConstant: 500).isActive = true
             self.infoView.widthAnchor.constraint(equalToConstant: self.view.frame.width - 64).isActive = true
 
             self.infoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
