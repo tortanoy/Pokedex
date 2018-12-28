@@ -12,7 +12,7 @@ class PokemonStatCell: UITableViewCell {
     
     // MARK: - Properties
     
-    var pokemon: Pokemon!
+    var pokemonViewModel: PokemonViewModel!
     
     var titleLabel: UILabel = {
         let label = UILabel()
@@ -54,12 +54,12 @@ class PokemonStatCell: UITableViewCell {
     func configureCell(withIndex index: Int) {
         
         guard let pokemonStat = PokemonStats(rawValue: index) else { return }
-        guard let id = pokemon.id else { return }
-        guard let height = pokemon.height else { return }
-        guard let weight = pokemon.weight else { return }
+        guard let id = pokemonViewModel.id else { return }
+        guard let height = pokemonViewModel.height else { return }
+        guard let weight = pokemonViewModel.weight else { return }
         
         switch pokemonStat {
-        case .PokemonType: statLabel.text = pokemon.type?.capitalized
+        case .PokemonType: statLabel.text = pokemonViewModel.type.capitalized
         case .PokedexId: statLabel.text = "\(id)"
         case .Height: statLabel.text = "\(height)"
         case .Weight: statLabel.text = "\(weight)"

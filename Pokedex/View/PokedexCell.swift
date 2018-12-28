@@ -14,11 +14,19 @@ class PokedexCell: UICollectionViewCell {
     
     var delegate: PokedexCellDelegate?
     
-    var pokemon: Pokemon? {
+//    var pokemon: Pokemon? {
+//        didSet {
+//            guard let pokemon = pokemon else { return }
+//            nameLabel.text = pokemon.name.capitalized
+//            imageView.image = pokemon.image
+//        }
+//    }
+    
+    var pokemonViewModel: PokemonViewModel? {
         didSet {
-            guard let pokemon = pokemon else { return }
-            nameLabel.text = pokemon.name.capitalized
-            imageView.image = pokemon.image
+            guard let pokemonViewModel = pokemonViewModel else { return }
+            nameLabel.text = pokemonViewModel.name.capitalized
+            imageView.image = pokemonViewModel.image
         }
     }
     
@@ -41,7 +49,6 @@ class PokedexCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 16)
-        label.text = "Bulbasaur"
         return label
     }()
     
@@ -71,9 +78,9 @@ class PokedexCell: UICollectionViewCell {
     // MARK: - Selectors
     
     @objc func handleLongPress(sender: UILongPressGestureRecognizer) {
-        guard let pokemon = self.pokemon else { return }
+        guard let pokemonViewModel = self.pokemonViewModel else { return }
         if sender.state == .began {
-            delegate?.presentInfoView(withPokemon: pokemon)
+            delegate?.presentInfoView(withPokemonViewModel: pokemonViewModel)
         }
     }
 }

@@ -15,8 +15,8 @@ class PokedexController: UICollectionViewController {
     // MARK: - Properties
     
     var searchBar: UISearchBar!
-    var pokemon = [Pokemon]()
-    var filteredPokemon = [Pokemon]()
+    var pokemonViewModels = [PokemonViewModel]()
+    var filteredPokemonViewModels = [PokemonViewModel]()
     var inSearchMode = false
     
     lazy var infoView: InfoView = {
@@ -56,21 +56,21 @@ class PokedexController: UICollectionViewController {
     }
     
     @objc func handleDismissal() {
-        dismissInfoView(viewPokemon: nil)
+        dismissInfoView(withViewModel: nil)
     }
     
     // MARK: - Helper Functions
     
-    func dismissInfoView(viewPokemon pokemon: Pokemon?) {
+    func dismissInfoView(withViewModel pokemonViewModel: PokemonViewModel?) {
         UIView.animate(withDuration: 0.5, animations: {
             self.visualEffectView.alpha = 0
             self.infoView.alpha = 0
             self.infoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
         }) { (_) in
             self.infoView.removeFromSuperview()
-            guard let pokemon = pokemon else { return }
+            guard let pokemonViewModel = pokemonViewModel else { return }
             let controller = PokemonInfoController()
-            controller.pokemon = pokemon
+            controller.pokemonViewModel = pokemonViewModel
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
@@ -120,7 +120,7 @@ class PokedexController: UICollectionViewController {
     
     func fetchPokemon() {
         Service.shared.fetchPokemon { (pokemon) in
-            self.pokemon = pokemon
+            self.pokemonViewModels = pokemon.map({ return PokemonViewModel(pokemon: $0)})
             self.collectionView.reloadData()
         }
     }
@@ -131,21 +131,21 @@ class PokedexController: UICollectionViewController {
 extension PokedexController {
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return inSearchMode ? filteredPokemon.count : pokemon.count
+        return inSearchMode ? filteredPokemonViewModels.count : pokemonViewModels.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifer, for: indexPath) as! PokedexCell
         cell.delegate = self
-        var pokemonToSend: Pokemon!
-        pokemonToSend = inSearchMode ? filteredPokemon [indexPath.item] : pokemon[indexPath.item]
-        cell.pokemon = pokemonToSend
+        var pokemonViewModel: PokemonViewModel!
+        pokemonViewModel = inSearchMode ? filteredPokemonViewModels [indexPath.item] : pokemonViewModels[indexPath.item]
+        cell.pokemonViewModel = pokemonViewModel
         return cell
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let controller = PokemonInfoController()
-        controller.pokemon = inSearchMode ? filteredPokemon [indexPath.item]: pokemon[indexPath.item]
+        controller.pokemonViewModel = inSearchMode ? filteredPokemonViewModels [indexPath.item]: pokemonViewModels[indexPath.item]
         navigationController?.pushViewController(controller, animated: true)
     }
 }
@@ -186,7 +186,7 @@ extension PokedexController: UISearchBarDelegate {
             view.endEditing(true)
         } else {
             inSearchMode = true
-            filteredPokemon = pokemon.filter({ $0.name.range(of: searchText) != nil })
+            filteredPokemonViewModels = pokemonViewModels.filter({ $0.name.range(of: searchText) != nil })
             collectionView.reloadData()
         }
     }
@@ -194,13 +194,12 @@ extension PokedexController: UISearchBarDelegate {
 
 extension PokedexController: PokedexCellDelegate {
     
-    func presentInfoView(withPokemon pokemon: Pokemon) {
+    func presentInfoView(withPokemonViewModel pokemonViewModel: PokemonViewModel) {
         configureSearchBar(shouldShow: false)
         
-        Service.shared.fetchPokemonData(forPokemon: pokemon) {
-            
+        Service.shared.fetchPokemonData(forPokemon: pokemonViewModel.pokemon) {
             self.view.addSubview(self.infoView)
-            self.infoView.pokemon = pokemon
+            self.infoView.pokemonViewModel = PokemonViewModel(pokemon: pokemonViewModel.pokemon)
             self.infoView.delegate = self
             self.infoView.translatesAutoresizingMaskIntoConstraints = false
             self.infoView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
@@ -219,8 +218,8 @@ extension PokedexController: PokedexCellDelegate {
         }
     }
     
-    func viewMoreInfo(forPokemon pokemon: Pokemon) {
-        dismissInfoView(viewPokemon: pokemon)
+    func viewMoreInfo(withViewModel pokemonViewModel: PokemonViewModel?) {
+        dismissInfoView(withViewModel: pokemonViewModel)
     }
 }
 

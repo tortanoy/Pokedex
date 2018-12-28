@@ -9,6 +9,6 @@
 import Foundation
 
 protocol PokedexCellDelegate {
-    func presentInfoView(withPokemon pokemon: Pokemon)
-    func viewMoreInfo(forPokemon pokemon: Pokemon)
+    func presentInfoView(withPokemonViewModel pokemonViewModel: PokemonViewModel)
+    func viewMoreInfo(withViewModel pokemonViewModel: PokemonViewModel?)
 }

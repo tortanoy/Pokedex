@@ -14,25 +14,36 @@ class InfoView: UIView {
     
     // MARK: - Properties
     
-    var pokemon: Pokemon? {
+//    var pokemon: Pokemon? {
+//        didSet {
+//            guard let pokemon = self.pokemon else { return }
+//            guard let baseExperience = pokemon.baseExperience else { return }
+//            nameLabel.text = pokemon.name.capitalized
+//            imageView.image = pokemon.image
+//            self.tableView.reloadData()        
+//            
+//            if pokemon.id < 151 {
+//                originalPokemonLabel.text = "Original Pokemon: Yes"
+//            } else {
+//                originalPokemonLabel.text = "Original Pokemon: No"
+//            }
+//            
+//            if baseExperience < 100 {
+//                baseExperienceLabel.text = "Pokemon is weak.."
+//            } else {
+//                baseExperienceLabel.text = "Pokemon is strong!"
+//            }
+//        }
+//    }
+    
+    var pokemonViewModel: PokemonViewModel? {
         didSet {
-            guard let pokemon = self.pokemon else { return }
-            guard let baseExperience = pokemon.baseExperience else { return }
-            nameLabel.text = pokemon.name.capitalized
-            imageView.image = pokemon.image
-            self.tableView.reloadData()        
-            
-            if pokemon.id < 151 {
-                originalPokemonLabel.text = "Original Pokemon: Yes"
-            } else {
-                originalPokemonLabel.text = "Original Pokemon: No"
-            }
-            
-            if baseExperience < 100 {
-                baseExperienceLabel.text = "Pokemon is weak.."
-            } else {
-                baseExperienceLabel.text = "Pokemon is strong!"
-            }
+            guard let pokemonViewModel = pokemonViewModel else { return }
+            nameLabel.text = pokemonViewModel.name.capitalized
+            imageView.image = pokemonViewModel.image
+            originalPokemonLabel.text = pokemonViewModel.originalPokemonLabel
+            baseExperienceLabel.text = pokemonViewModel.baseExperienceLabel
+            tableView.reloadData()
         }
     }
     
@@ -100,8 +111,8 @@ class InfoView: UIView {
     // MARK: - Selectors
     
     @objc func handleViewMoreInfo() {
-        guard let pokemon = self.pokemon else { return }
-        delegate?.viewMoreInfo(forPokemon: pokemon)
+        guard let pokemonViewModel = self.pokemonViewModel else { return }
+        delegate?.viewMoreInfo(withViewModel: pokemonViewModel)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -159,7 +170,7 @@ extension InfoView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! PokemonStatCell
-        cell.pokemon = self.pokemon
+        cell.pokemonViewModel = self.pokemonViewModel
         cell.titleLabel.text = PokemonStats(rawValue: indexPath.row)?.description
         cell.configureCell(withIndex: indexPath.row)
         return cell

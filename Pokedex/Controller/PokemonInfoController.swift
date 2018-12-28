@@ -14,7 +14,7 @@ class PokemonInfoController: UIViewController {
     
     // MARK: - Properties
     
-    var pokemon: Pokemon?
+    var pokemonViewModel: PokemonViewModel?
     var tableView: UITableView!
     
     let imageView: UIImageView = {
@@ -58,12 +58,12 @@ class PokemonInfoController: UIViewController {
     // MARK: - API
     
     func fetchPokemonData() {
-        guard let pokemon = self.pokemon else { return }
-        navigationItem.title = pokemon.name.capitalized
-        imageView.image = pokemon.image
+        guard let pokemonViewModel = self.pokemonViewModel else { return }
+        navigationItem.title = pokemonViewModel.name.capitalized
+        imageView.image = pokemonViewModel.image
         
-        Service.shared.fetchPokemonData(forPokemon: pokemon) {
-            self.infoLabel.text = pokemon.description
+        Service.shared.fetchPokemonData(forPokemon: pokemonViewModel.pokemon) {
+            self.infoLabel.text = pokemonViewModel.pokemon.description
             self.configureTableView()
         }
     }
@@ -92,7 +92,7 @@ extension PokemonInfoController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! PokemonStatCell
-        cell.pokemon = self.pokemon
+        cell.pokemonViewModel = self.pokemonViewModel
         cell.titleLabel.text = PokemonStats(rawValue: indexPath.row)?.description
         cell.configureCell(withIndex: indexPath.row)
         return cell
