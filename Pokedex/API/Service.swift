@@ -24,6 +24,9 @@ class Service {
                 self.setImage(withUrlString: imageUrl, completion: { (image) in
                     let pokemon = Pokemon(id: id, name: name, image: image)
                     pokemonArray.append(pokemon)
+                    pokemonArray.sort(by: { (poke1, poke2) -> Bool in
+                        poke1.id < poke2.id
+                    })                                                
                     completion(pokemonArray)
                 })
             }
