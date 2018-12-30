@@ -54,9 +54,19 @@ class PokemonStatCell: UITableViewCell {
     func configureCell(withIndex index: Int) {
         
         guard let pokemonStat = PokemonStats(rawValue: index) else { return }
-        guard let id = pokemonViewModel.id else { return }
-        guard let height = pokemonViewModel.height else { return }
-        guard let weight = pokemonViewModel.weight else { return }
+        titleLabel.text = pokemonStat.description
+        guard let id = pokemonViewModel.id else {
+            print("No id found..")
+            return
+        }
+        guard let height = pokemonViewModel.height else {
+            print("No id height..")
+            return
+        }
+        guard let weight = pokemonViewModel.weight else {
+            print("No id weight..")
+            return
+        }
         
         switch pokemonStat {
         case .PokemonType: statLabel.text = pokemonViewModel.type.capitalized

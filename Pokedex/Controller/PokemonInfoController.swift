@@ -93,7 +93,6 @@ extension PokemonInfoController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! PokemonStatCell
         cell.pokemonViewModel = self.pokemonViewModel
-        cell.titleLabel.text = PokemonStats(rawValue: indexPath.row)?.description
         cell.configureCell(withIndex: indexPath.row)
         return cell
     }

@@ -137,16 +137,19 @@ extension PokedexController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifer, for: indexPath) as! PokedexCell
         cell.delegate = self
-        var pokemonViewModel: PokemonViewModel!
-        pokemonViewModel = inSearchMode ? filteredPokemonViewModels [indexPath.item] : pokemonViewModels[indexPath.item]
-        cell.pokemonViewModel = pokemonViewModel
+        cell.pokemonViewModel = inSearchMode ? filteredPokemonViewModels [indexPath.item] : pokemonViewModels[indexPath.item]
         return cell
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let controller = PokemonInfoController()
-        controller.pokemonViewModel = inSearchMode ? filteredPokemonViewModels [indexPath.item]: pokemonViewModels[indexPath.item]
-        navigationController?.pushViewController(controller, animated: true)
+        
+        guard  let pokemon = inSearchMode ? filteredPokemonViewModels [indexPath.item].pokemon: pokemonViewModels[indexPath.item].pokemon else { return }
+        
+        Service.shared.fetchPokemonData(forPokemon: pokemon) {
+            controller.pokemonViewModel = PokemonViewModel(pokemon: pokemon)
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
     }
 }
 
@@ -195,31 +198,33 @@ extension PokedexController: UISearchBarDelegate {
 extension PokedexController: PokedexCellDelegate {
     
     func presentInfoView(withPokemonViewModel pokemonViewModel: PokemonViewModel) {
-        configureSearchBar(shouldShow: false)
+//        configureSearchBar(shouldShow: false)
+//
+//        Service.shared.fetchPokemonData(forPokemon: pokemonViewModel.pokemon) {
+//            self.view.addSubview(self.infoView)
+//            self.infoView.pokemonViewModel = PokemonViewModel(pokemon: pokemonViewModel.pokemon)
+//            self.infoView.delegate = self
+//            self.infoView.translatesAutoresizingMaskIntoConstraints = false
+//            self.infoView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+//            self.infoView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -44).isActive = true
+//            self.infoView.heightAnchor.constraint(equalToConstant: 500).isActive = true
+//            self.infoView.widthAnchor.constraint(equalToConstant: self.view.frame.width - 64).isActive = true
+//
+//            self.infoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
+//            self.infoView.alpha = 0
+//
+//            UIView.animate(withDuration: 0.5) {
+//                self.visualEffectView.alpha = 1
+//                self.infoView.alpha = 1
+//                self.infoView.transform = CGAffineTransform.identity
+//            }
+//        }
         
-        Service.shared.fetchPokemonData(forPokemon: pokemonViewModel.pokemon) {
-            self.view.addSubview(self.infoView)
-            self.infoView.pokemonViewModel = PokemonViewModel(pokemon: pokemonViewModel.pokemon)
-            self.infoView.delegate = self
-            self.infoView.translatesAutoresizingMaskIntoConstraints = false
-            self.infoView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-            self.infoView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -44).isActive = true
-            self.infoView.heightAnchor.constraint(equalToConstant: 500).isActive = true
-            self.infoView.widthAnchor.constraint(equalToConstant: self.view.frame.width - 64).isActive = true
-
-            self.infoView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
-            self.infoView.alpha = 0
-
-            UIView.animate(withDuration: 0.5) {
-                self.visualEffectView.alpha = 1
-                self.infoView.alpha = 1
-                self.infoView.transform = CGAffineTransform.identity
-            }
-        }
+        pokemonViewModel.presentInfoView(inController: self)
     }
     
     func viewMoreInfo(withViewModel pokemonViewModel: PokemonViewModel?) {
-        dismissInfoView(withViewModel: pokemonViewModel)
+        self.dismissInfoView(withViewModel: pokemonViewModel)
     }
 }
 
